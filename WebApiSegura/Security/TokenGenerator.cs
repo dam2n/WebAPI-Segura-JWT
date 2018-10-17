@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace WebApiSegura.Controllers
+namespace WebApiSegura.Security
 {
     /// <summary>
     /// JWT Token generator class using "secret-key"
@@ -11,9 +11,9 @@ namespace WebApiSegura.Controllers
     /// </summary>
     internal static class TokenGenerator
     {
-        public static string GenerateTokenJwt(string username)
+        public static string GenerateTokenJwt(string username, string rolname)
         {
-            // appsetting for Token JWT
+            //TODO: appsetting for Demo JWT - protect correctly this settings
             var secretKey = ConfigurationManager.AppSettings["JWT_SECRET_KEY"];
             var audienceToken = ConfigurationManager.AppSettings["JWT_AUDIENCE_TOKEN"];
             var issuerToken = ConfigurationManager.AppSettings["JWT_ISSUER_TOKEN"];
@@ -23,7 +23,10 @@ namespace WebApiSegura.Controllers
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
             // create a claimsIdentity 
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) });
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] {
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, rolname)
+            });
 
             // create token to the user 
             var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();

@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Web.Http;
 using WebApiSegura.Models;
+using WebApiSegura.Security;
 
 namespace WebApiSegura.Controllers
 {
@@ -35,17 +36,35 @@ namespace WebApiSegura.Controllers
             if (login == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            //TODO: Validate credentials Correctly, this code is only for demo !!
-            bool isCredentialValid = (login.Password == "123456"); 
-            if (isCredentialValid)
+            //TODO: This code is only for demo - extract method in new class & validate correctly in your application !!
+            var isUserValid = (login.Username == "user" && login.Password == "123456");
+            if (isUserValid)
             {
-                var token = TokenGenerator.GenerateTokenJwt(login.Username);
+                var rolename = "Developer";
+                var token = TokenGenerator.GenerateTokenJwt(login.Username, rolename);
                 return Ok(token);
             }
-            else
+
+            //TODO: This code is only for demo - extract method in new class & validate correctly in your application !!
+            var isTesterValid = (login.Username == "test" && login.Password == "123456");
+            if (isTesterValid)
             {
-                return Unauthorized();
+                var rolename = "Tester";
+                var token = TokenGenerator.GenerateTokenJwt(login.Username, rolename);
+                return Ok(token);
             }
+
+            //TODO: This code is only for demo - extract method in new class & validate correctly in your application !!
+            var isAdminValid = (login.Username == "admin" && login.Password == "123456");
+            if (isAdminValid)
+            {
+                var rolename = "Administrator";
+                var token = TokenGenerator.GenerateTokenJwt(login.Username, rolename);
+                return Ok(token);
+            }
+
+            // Unauthorized access 
+            return Unauthorized();
         }
     }
 }
